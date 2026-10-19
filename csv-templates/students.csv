@@ -1,0 +1,4 @@
+studentNumber,firstName,lastName,email,phone,programmeCode,admissionDate,status
+STU-01001,Thabo,Mokoena,thabo.mokoena@example.edu,072 111 0001,SW,2026-02-03,active
+STU-01002,Aisha,Naidoo,aisha.naidoo@example.edu,072 111 0002,DS,2026-02-03,active
+,,Pieter,van Wyk pieter.vanwyk@example.edu,,,SW,2026-01-15,active

@@ -1,0 +1,4 @@
+code,name,isActive
+ACAD,Academic Affairs,true
+FIN,Finance & Operations,true
+HR,Human Resources,false

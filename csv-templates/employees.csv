@@ -1,0 +1,3 @@
+employeeNumber,firstName,lastName,email,phone,departmentCode,jobTitle,employmentDate,status
+EMP-01001,Grace,Mabaso,grace.mabaso@example.edu,073 222 0001,SS,Registrar Officer,2024-05-01,active
+, Rajesh,Pillay,rajesh.pillay@example.edu,,FIN,Finance Officer,2023-10-02,active

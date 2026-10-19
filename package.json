@@ -1,0 +1,22 @@
+{
+  "name": "unicore",
+  "version": "0.1.0",
+  "private": true,
+  "description": "UniCore — minimal university management system (learning project)",
+  "scripts": {
+    "setup": "npm install --prefix apis && npm install --prefix frontend",
+    "migrate": "npm run migrate --prefix apis",
+    "migrate:status": "npm run migrate:status --prefix apis",
+    "seed": "npm run seed --prefix apis",
+    "dev:api": "npm run dev --prefix apis",
+    "dev:web": "npm run dev --prefix frontend",
+    "build": "npm run build --prefix apis && npm run build --prefix frontend",
+    "test": "npm test --prefix apis",
+    "start": "npm start --prefix apis"
+  },
+  "repository": {
+    "type": "git",
+    "url": "local"
+  },
+  "license": "UNLICENSED"
+}

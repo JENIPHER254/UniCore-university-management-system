@@ -1,0 +1,4 @@
+code,name,level,isActive
+SW,BSc Software Engineering,Undergraduate,true
+DS,BSc Data Science,Undergraduate,true
+MI,MSc Information Technology,Postgraduate,false

@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# SQLite database files — never commit
+db/data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.backup*
+
+# Builds
+apis/dist/
+frontend/dist/
+
+# Logs
+npm-debug.log*
+*.log
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
