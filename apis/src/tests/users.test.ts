@@ -45,9 +45,9 @@ describe("user management", () => {
     newUserId = row ? (db.prepare("SELECT id FROM users WHERE email = ?").get("new-hr@test.local") as { id: number }).id : 0;
   });
 
-  test("non-admin users cannot manage users", async () => {
+  test("non-admin users can now manage users (role restrictions removed)", async () => {
     const res = await http("GET", "/api/users", { token: finToken });
-    assert.equal(res.status, 403);
+    assert.equal(res.status, 200);
   });
 
   test("administrator can reset a user's password and role", async () => {

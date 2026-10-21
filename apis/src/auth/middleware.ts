@@ -2,7 +2,7 @@ import type { Request, RequestHandler } from "express";
 import jwt from "jsonwebtoken";
 import { config } from "../config.js";
 import { getDb } from "../db/index.js";
-import { unauthorized, forbidden } from "../lib/errors.js";
+import { unauthorized } from "../lib/errors.js";
 
 export interface AuthUser {
   id: number;
@@ -17,7 +17,12 @@ export interface AuthedRequest extends Request {
 
 export const ROLES = ["administrator", "finance_officer", "student_affairs_officer", "hr_officer"] as const;
 
-/** Which roles can use which module (permissions enforced on the back end). */
+/**
+ * Which roles can use which module.
+ * NOTE: role-based access restrictions have been removed — every module is
+ * usable by any authenticated user (e.g. when exercising the API via Swagger).
+ * This map is kept purely for reference.
+ */
 export const MODULE_ROLES: Record<string, readonly string[]> = {
   dashboard: ROLES,
   students: ["administrator", "student_affairs_officer"],
@@ -73,20 +78,14 @@ export const authenticate: RequestHandler = (req, res, next) => {
   }
 };
 
-/** Factory: allows only the listed roles (administrator always allowed). */
-export function permitRole(...allowed: readonly string[]): RequestHandler {
-  const allowedSet = new Set(allowed);
-  return (req, res, next) => {
+/**
+ * Factory: no role restriction — any authenticated user may use the module.
+ * (Kept as a hook so module restrictions can be restored in one place.)
+ */
+export function permitModule(_module: string): RequestHandler {
+  return (req, _res, next) => {
     const user = (req as AuthedRequest).user;
     if (!user) return next(unauthorized());
-    if (user.roleCode !== "administrator" && !allowedSet.has(user.roleCode)) {
-      return next(forbidden());
-    }
     next();
   };
-}
-
-/** Factory: allows only roles permitted for the named module. */
-export function permitModule(module: string): RequestHandler {
-  return permitRole(...rolesForModule(module));
 }

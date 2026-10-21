@@ -71,12 +71,12 @@ describe("charges", () => {
     assert.equal(res.body.amount_cents, 100010);
   });
 
-  test("student_affairs_officer cannot create charges", async () => {
+  test("student_affairs_officer can create charges (role restrictions removed)", async () => {
     const res = await http("POST", "/api/finance/charges", {
       token: otherToken,
-      json: { studentId: studentA, description: "Nope", amount: "10.00", chargeDate: "2026-03-01" },
+      json: { studentId: studentA, description: "Other officer charge", amount: "10.00", chargeDate: "2026-03-01" },
     });
-    assert.equal(res.status, 403);
+    assert.equal(res.status, 201);
   });
 
   test("charges for inactive students are rejected", async () => {

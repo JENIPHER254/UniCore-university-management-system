@@ -64,12 +64,11 @@ describe("authentication", () => {
 });
 
 describe("role-based permissions", () => {
-  test("finance officer cannot access HR endpoints", async () => {
-    // seed a department so list is cheap (allowed to be empty too)
+  test("finance officer can access HR endpoints (role restrictions removed)", async () => {
     const loginRes = await login(FIN.email, FIN.password);
     const token = loginRes.body.token;
     const res = await http("GET", "/api/employees", { token });
-    assert.equal(res.status, 403);
+    assert.equal(res.status, 200);
   });
 
   test("finance officer can access finance endpoints", async () => {
