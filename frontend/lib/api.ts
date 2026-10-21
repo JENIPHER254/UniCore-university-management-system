@@ -3,8 +3,8 @@
  * All UI data is fetched live from these endpoints with a bearer token.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
-
+// const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'
+const API_BASE = 'https://unicore-system-iw37.onrender.com'
 const TOKEN_KEY = 'unicore.token'
 const USER_KEY = 'unicore.user'
 
