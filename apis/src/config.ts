@@ -34,10 +34,18 @@ function loadEnvFile(): void {
 
 loadEnvFile();
 
-const d = (fileUrl: string) => path.dirname(fileURLToPath(fileUrl));
-const srcDir = d(import.meta.url); // apis/src
-const apisDir = path.dirname(srcDir); // apis/
-export const repoRoot = path.resolve(apisDir, ".."); // project root
+// =======local config========
+// const d = (fileUrl: string) => path.dirname(fileURLToPath(fileUrl));
+// const srcDir = d(import.meta.url); // apis/src
+// const apisDir = path.dirname(srcDir); // apis/
+// export const repoRoot = path.resolve(apisDir, ".."); // project root
+
+// =======production========
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+
+export const repoRoot = path.basename(currentDir) === "src"
+  ? path.resolve(currentDir, "../..")
+  : path.resolve(currentDir, "..");
 
 function required(name: string, fallback?: string): string {
   const value = process.env[name] ?? fallback;
