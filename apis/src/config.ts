@@ -44,8 +44,8 @@ loadEnvFile();
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 
 export const repoRoot = path.basename(currentDir) === "src"
-  ? path.resolve(currentDir, "./")
-  : path.resolve(currentDir, "./");
+  ? path.resolve(currentDir, "..")
+  : path.resolve(currentDir, "..");
 
 function required(name: string, fallback?: string): string {
   const value = process.env[name] ?? fallback;
