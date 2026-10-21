@@ -106,7 +106,28 @@ function seed(db: Db): void {
         )
         .run(number, first, last, email, departmentIds.get(departmentName)!, title, employmentDate);
     }
+    // Initial super administrator
+    const adminEmail = "admin@unicore.com";
 
+    const existingAdmin = db
+      .prepare("SELECT id FROM users WHERE email = ?")
+      .get(adminEmail);
+
+    if (!existingAdmin) {
+      db.prepare(`
+    INSERT INTO users (email, full_name, password_hash, role_code)
+    VALUES (?, ?, ?, ?)
+  `).run(
+        adminEmail,
+        "Admin",
+        hashPassword("admin@123"),
+        "administrator"
+      );
+
+      console.log("Initial super administrator created.");
+    } else {
+      console.log("Super administrator already exists. Skipping.");
+    }
     // 5. Charges + payments for two students (financial demo)
     const financeSeed = [
       { email: "thabo.mokoena@example.edu", charge: 9500.0, payment: 5000.0 },
