@@ -60,22 +60,58 @@ export function loadUser(userId: number): AuthUser | null {
 export function invalidateUserCache(userId?: number): void {
   if (userId === undefined) userCache.clear();
   else userCache.delete(userId);
+  fallbackUser = undefined; // default fallback identity may have changed
 }
 
-/** Requires a valid Bearer token; attaches the user to the request. */
-export const authenticate: RequestHandler = (req, res, next) => {
+let fallbackUser: AuthUser | null | undefined;
+
+/**
+ * Default identity used when a request carries no (or an invalid) Bearer token.
+ * Auth has been disabled: unauthenticated requests act as the first active
+ * administrator, so Swagger/curl can be used with no Authorize header while
+ * audit columns still reference a real user.
+ */
+function getFallbackUser(): AuthUser | null {
+  if (fallbackUser !== undefined) return fallbackUser;
+  const db = getDb();
+  const row = db
+    .prepare(
+      `SELECT id, email, full_name, role_code
+       FROM users
+       WHERE is_active = 1
+       ORDER BY CASE WHEN role_code = 'administrator' THEN 0 ELSE 1 END, id
+       LIMIT 1`
+    )
+    .get() as { id: number; email: string; full_name: string; role_code: string } | undefined;
+  fallbackUser = row ? { id: row.id, email: row.email, fullName: row.full_name, roleCode: row.role_code } : null;
+  return fallbackUser;
+}
+
+/**
+ * Authentication is disabled: a valid Bearer token is still honored, but
+ * requests without one automatically act as the default (administrator) user
+ * instead of failing with 401.
+ */
+export const authenticate: RequestHandler = (req, _res, next) => {
   const header = req.headers.authorization;
   const token = header?.startsWith("Bearer ") ? header.slice(7) : undefined;
-  if (!token) return next(unauthorized());
-  try {
-    const payload = jwt.verify(token, config.jwtSecret) as unknown as { sub: number };
-    const user = loadUser(payload.sub);
-    if (!user) return next(unauthorized("Your account is no longer active"));
-    (req as AuthedRequest).user = user;
-    next();
-  } catch {
-    next(unauthorized("Session expired — please sign in again"));
+  if (token) {
+    try {
+      const payload = jwt.verify(token, config.jwtSecret) as unknown as { sub: number };
+      const user = loadUser(payload.sub);
+      if (user) {
+        (req as AuthedRequest).user = user;
+        next();
+        return;
+      }
+    } catch {
+      // invalid/expired token — fall back to the default identity below
+    }
   }
+  const fallback = getFallbackUser();
+  if (!fallback) return next(unauthorized("No users exist yet — seed the database first"));
+  (req as AuthedRequest).user = fallback;
+  next();
 };
 
 /**

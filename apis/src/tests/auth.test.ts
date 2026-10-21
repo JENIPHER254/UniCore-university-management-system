@@ -57,9 +57,9 @@ describe("authentication", () => {
     assert.equal(res.status, 401);
   });
 
-  test("protected endpoints require a token", async () => {
+  test("protected endpoints work without a token (auth disabled)", async () => {
     const res = await http("GET", "/api/students");
-    assert.equal(res.status, 401);
+    assert.equal(res.status, 200);
   });
 });
 
@@ -78,8 +78,8 @@ describe("role-based permissions", () => {
     assert.equal(res.status, 200);
   });
 
-  test("anonymous users cannot access programmes", async () => {
+  test("anonymous requests can access programmes (auth disabled)", async () => {
     const res = await http("GET", "/api/programmes");
-    assert.equal(res.status, 401);
+    assert.equal(res.status, 200);
   });
 });
