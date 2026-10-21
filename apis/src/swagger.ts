@@ -59,7 +59,8 @@ export const swaggerSpec = swaggerJsdoc({
         "REST API for the UniCore university management system, backed live by the SQLite database (db/data/unicore.db via migrations). " +
         "Money values in request bodies are decimal strings, e.g. \"1250.50\". All list endpoints are paginated and read directly from SQLite.",
     },
-    servers: [{ url: `http://localhost:${config.port}`, description: "Local development server" }],
+    // servers: [{ url: `http://localhost:${config.port}`, description: "Local development server" }], ----development
+    servers: [{ url: `/`, description: "Production server" }], // ----
     tags: [
       { name: "Auth", description: "Authentication and user session APIs" },
       { name: "Dashboard", description: "Summary data for the dashboard" },
