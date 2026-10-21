@@ -13,11 +13,10 @@ db.pragma("wal_checkpoint(PASSIVE)");
 // });
 
 // ========production========
-app.use(cors({
-  origin: 'https://uni-core-university-management-syst.vercel.app',
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-}))
+app.listen(config.port, () => {
+  console.log(`UniCore API listening on port ${config.port}`);
+  console.log(`CORS origin: ${config.corsOrigin}`);
+});
 
 
 // Start the API server
