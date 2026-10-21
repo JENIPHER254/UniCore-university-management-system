@@ -24,9 +24,14 @@ app.use(express.json({ limit: "5mb", strict: false }));
 app.use(express.urlencoded({ extended: true }));
 
 // Manual, minimal CORS (no dependency)
+// Allowed origins = CORS_ORIGIN list (comma separated). Local development origins
+// (localhost / 127.0.0.1 on any port) are always allowed when NODE_ENV != production.
+const corsAllowList = config.corsOrigin.split(",").map((s) => s.trim()).filter(Boolean);
+const isLocalDevOrigin = (origin: string) =>
+  process.env.NODE_ENV !== "production" && /^https?:\/\/(localhost|\[::1\]|127\.0\.0\.1)(:\d+)?$/.test(origin);
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  if (origin && (origin === config.corsOrigin || process.env.CORS_ORIGIN === "*")) {
+  if (origin && (corsAllowList.includes(origin) || process.env.CORS_ORIGIN === "*" || isLocalDevOrigin(origin))) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "false");
   }
@@ -48,7 +53,10 @@ app.use((_req, res, next) => {
 
 app.get("/api/health", (_req, res) => res.json({ ok: true }));
 app.get("/api/openapi.json", (_req, res) => res.json(swaggerSpec));
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true, customSiteTitle: "UniCore API Docs" }));
+// Swagger UI: canonical route /api/docs with an /api-docs alias (kept for convenience).
+const swaggerUiHandler = swaggerUi.setup(swaggerSpec, { explorer: true, customSiteTitle: "UniCore API Docs" });
+app.use("/api/docs", swaggerUi.serve, swaggerUiHandler);
+app.use("/api-docs", swaggerUi.serve, swaggerUiHandler);
 
 app.use("/api/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
